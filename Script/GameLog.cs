@@ -7,7 +7,6 @@ public class GameLog : MonoBehaviour
     [SerializeField] Text CloseRoomLog;
     [SerializeField] Text MaxRoom;
 
-
     int NumberOfClosedRooms;
 
     public void ForListOfRoomsThatAppeared(string other)

@@ -4,35 +4,43 @@ public class SpawnPoint : MonoBehaviour
 {
     SpawnRoom spawnRoom;
 
+    public int SpawnPriority { get; set; }
+
     private void Awake()
     {
-        spawnRoom = GetComponent<SpawnRoom>();
+        spawnRoom = GameObject.FindGameObjectWithTag("SpawnRoom").GetComponent<SpawnRoom>();
     }
 
     private void Start()
     {
-        spawnRoom.StartCoroutine(spawnRoom.DelayForFilter());
+        spawnRoom.AddOneSpawnPointToList(gameObject);
+        Prioritize();
+    }
+
+    void Prioritize()
+    {
+        if (gameObject.name == "SpawnPoint U") SpawnPriority = 0;
+        if (gameObject.name == "SpawnPoint D") SpawnPriority = 1;
+        if (gameObject.name == "SpawnPoint R") SpawnPriority = 2;
+        if (gameObject.name == "SpawnPoint L") SpawnPriority = 3;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("SpawnPoint"))
         {
-            if (gameObject.transform.position.z == 1 && other.gameObject.transform.position.z == 4) ExcessRemoval(1);
-            else ExcessRemoval(2);
+             if (SpawnPriority > other.gameObject.GetComponent<SpawnPoint>().SpawnPriority) Destroy(other.gameObject);
+             CloseTheRemainingExits();
         }
-    }   
+    }
 
-    private void ExcessRemoval(int version)
-    {
-        if (version == 1) if (gameObject.transform.position.z == 0 || gameObject.transform.position.z == 2) Destroy(gameObject);
-        if (version == 2) if (gameObject.transform.position.z == 1 || gameObject.transform.position.z == 4) Destroy(gameObject);
+    private void ExcessRemoval()
+    {        
         Invoke("CloseTheRemainingExits", .1f);
     }
 
     private void CloseTheRemainingExits()
     {
-        spawnRoom.ClosesOpenRooms();
-        Destroy(gameObject);
+        spawnRoom.ClosesOpenRoomsThirdWay(gameObject);
     }
 }

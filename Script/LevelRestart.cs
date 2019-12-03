@@ -6,7 +6,7 @@ public class LevelRestart : MonoBehaviour
     [SerializeField] bool Switch = true;
 
     float TimeToRestart = 0;
-    float EndTime = 7;
+    float EndTime = 15;
 
      void Update ()
     {
@@ -15,7 +15,7 @@ public class LevelRestart : MonoBehaviour
             // temporarily ->
             if (TimeToRestart < EndTime) TimeToRestart += Time.deltaTime;
             else SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            // <|
+            // <| (test time)
         }
     }
 }

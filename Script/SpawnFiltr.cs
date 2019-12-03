@@ -6,17 +6,22 @@ public class SpawnFiltr : MonoBehaviour
     RoomTemplates roomTemplates;
     SpawnRoom spawnRoom;
 
+    public string PositionStatus { get; set; }
+
     string RoomThatIsOnTheSpawnSide;
     string DropoutItem;
-
-    bool WhetherSpawnIsAllowed = true;
 
     [SerializeField] List<GameObject> UnfilteredList;
 
     private void Awake()
     {
         roomTemplates = GameObject.FindGameObjectWithTag("RoomTemplates").GetComponent<RoomTemplates>();
-        spawnRoom = GetComponent<SpawnRoom>();
+        spawnRoom = GameObject.FindGameObjectWithTag("SpawnRoom").GetComponent<SpawnRoom>();
+    }
+
+    private void Start()
+    {
+        PositionStatus = PositionStatus ?? "default action";
     }
 
     #region We filter rooms for spawn
@@ -64,40 +69,40 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionUp()
     {
-        if (gameObject.name == "SpawnPoint U") spawnRoom.SpawnMarkTwo(roomTemplates.DownRooms);
+        if (gameObject.name == "SpawnPoint U") spawnRoom.ClosesOpenRoomsSecondWay();
         else
         {
-            spawnRoom.Act = "activation for U";
+            PositionStatus = "activation for U";
             MainFilter();
         }
     }
 
     void CheckOppositeDirectionDown()
     {
-        if (gameObject.name == "SpawnPoint D") spawnRoom.SpawnMarkTwo(roomTemplates.UpRooms);
+        if (gameObject.name == "SpawnPoint D") spawnRoom.ClosesOpenRoomsSecondWay();
         else
         {
-            spawnRoom.Act = "activation for D";
+            PositionStatus = "activation for D";
             MainFilter();
         }
     }
 
     void CheckOppositeDirectionLeft()
     {
-        if (gameObject.name == "SpawnPoint L") spawnRoom.SpawnMarkTwo(roomTemplates.RightRooms);
+        if (gameObject.name == "SpawnPoint L") spawnRoom.ClosesOpenRoomsSecondWay();
         else
         {
-            spawnRoom.Act = "activation for L";
+            PositionStatus = "activation for L";
             MainFilter();
         }
     }
 
     void CheckOppositeDirectionRight()
     {
-        if (gameObject.name == "SpawnPoint R") spawnRoom.SpawnMarkTwo(roomTemplates.LeftRooms);
+        if (gameObject.name == "SpawnPoint R") spawnRoom.ClosesOpenRoomsSecondWay();
         else
         {
-            spawnRoom.Act = "activation for R";
+            PositionStatus = "activation for R";
             MainFilter();
         }
     }
@@ -105,17 +110,23 @@ public class SpawnFiltr : MonoBehaviour
     #endregion
 
     void MainFilter()
-    {
+    {       
         int endNumber = 0;
         for (int index = 0; index < UnfilteredList.Count; index++)
         {
             endNumber = UnfilteredList[index].name.Length - 5;
-            if (!UnfilteredList[index].name.Substring(5, endNumber).Contains(DropoutItem))
+            if (UnfilteredList[index].name.Substring(5, endNumber).Contains(DropoutItem))
             {
-                spawnRoom.AddToSpawnList(UnfilteredList[index]);
+                UnfilteredList[index] = null;
             }
         }
+        UnfilteredList.RemoveAll(x => x == null);
     }
-    
+
+    public List<GameObject> FilteredList()
+    {           
+        return UnfilteredList;
+    }
+
     #endregion
 }

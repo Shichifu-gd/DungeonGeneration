@@ -12,6 +12,11 @@ public class PositionCheck : MonoBehaviour
 
     void Start()
     {
+        if (room) FormSideWithAisle();
+    }
+
+    void FormSideWithAisle()
+    {
         PositionNearTheRoom = gameObject.name.Substring(14);
         ExitsFromTheRoom = room.gameObject.name.Substring(5);
         if (ExitsFromTheRoom.Contains(PositionNearTheRoom)) SideWithAisle = "on " + PositionNearTheRoom;
@@ -26,5 +31,5 @@ public class PositionCheck : MonoBehaviour
             Destroy(gameObject);
         }
         if (other.CompareTag("Room")) Destroy(gameObject);
-    }
+    }  
 }

@@ -5,15 +5,7 @@ public class ListOfRoomsThatAppeared : MonoBehaviour
 {
     public GameLog gameLog;
 
-    public int MaximumNumberOfRooms { get; set; }
-
-    [SerializeField] List<GameObject> RoomsAvailable;
-
-    private void Start()
-    {
-        MaximumNumberOfRooms = Random.Range(7, 15);
-        gameLog.ForMaxRoom(MaximumNumberOfRooms);
-    }
+    [SerializeField] List<GameObject> RoomsAvailable;   
 
     private void Update()
     {
@@ -30,10 +22,22 @@ public class ListOfRoomsThatAppeared : MonoBehaviour
         int result = RoomsAvailable.Count;
         return result;
     }
+
+    public int DetermineNumberRooms()
+    {
+        int maximumNumberOfRooms = Random.Range(7, 15);
+        gameLog.ForMaxRoom(maximumNumberOfRooms);
+        return maximumNumberOfRooms;
+    }
    
-    public GameObject test()
+    public GameObject IdentifyLastRoom()
     {       
         GameObject lastRoom = RoomsAvailable[RoomsAvailable.Count -1];
         return lastRoom;
+    }
+
+    public List<GameObject> ListTransfer()
+    {
+        return RoomsAvailable;
     }
 }
