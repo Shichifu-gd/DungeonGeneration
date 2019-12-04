@@ -41,6 +41,6 @@ public class SpawnPoint : MonoBehaviour
 
     private void CloseTheRemainingExits()
     {
-        spawnRoom.ClosesOpenRoomsThirdWay(gameObject);
+        spawnRoom.ClosesOpenRooms(gameObject);
     }
 }

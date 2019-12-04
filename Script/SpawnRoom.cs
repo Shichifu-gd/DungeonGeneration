@@ -19,16 +19,16 @@ public class SpawnRoom : MonoBehaviour
     int GlobalIndex;
     int CurrentSizeList;
     int MaximumNumberRooms;
-    int CurrentIndex = 0;
 
     string CurrentPositionStatus;
 
-    bool WhetherSpawnIsAllowed = true;
+    [SerializeField]
     bool SwitchForObscurity;
+    bool WhetherSpawnIsAllowed = true;
 
-    GameObject CurrentPosition;
+    [SerializeField] GameObject CurrentPosition;
 
-    [SerializeField] List<GameObject> SpawnList;
+    [SerializeField] GameObject[] SpawnList;
     [SerializeField] List<GameObject> SpawnPointList;
 
     void Start()
@@ -50,11 +50,11 @@ public class SpawnRoom : MonoBehaviour
 
     public IEnumerator DelayForFilter()
     {
-        float extraTime = .3f;
+        float extraTime = .2f;
         yield return new WaitForSeconds(extraTime);
         DetermineCurrentSpawnPosition();
         CheckIfFilterWasRunning();
-        Destroy(CurrentPosition.gameObject);
+        Destroy(CurrentPosition);
     }
 
     void DetermineCurrentSpawnPosition()
@@ -62,8 +62,8 @@ public class SpawnRoom : MonoBehaviour
         SpawnPointList.RemoveAll(x => x == null);
         if (SpawnPointList.Count > 0)
         {
+            CurrentPositionStatus = SpawnPointList[0].GetComponent<SpawnFiltr>().PositionStatus;
             CurrentPosition = SpawnPointList[0];
-            CurrentPositionStatus = CurrentPosition.GetComponent<SpawnFiltr>().PositionStatus;
             AddToSpawnList();
         }
     }
@@ -72,7 +72,7 @@ public class SpawnRoom : MonoBehaviour
 
     void AddToSpawnList()
     {
-        SpawnList = CurrentPosition.GetComponent<SpawnFiltr>().FilteredList();
+        SpawnList = CurrentPosition.GetComponent<SpawnFiltr>().GetFilteredList();
     }
 
     public void AddOneSpawnPointToList(GameObject spawnPoint)
@@ -82,86 +82,107 @@ public class SpawnRoom : MonoBehaviour
 
     #endregion
 
+    #region Distributor
+
     void CheckIfFilterWasRunning()
     {
-        CheckList();
+        FindOutSizeOfList();
         if (CurrentSizeList < MaximumNumberRooms)
         {
-            if (CurrentPosition != null)
-            {
-                if (CurrentPositionStatus == "default action") SpawnDefault();
-                else SpawnWihsUsingFilter();
-            }
+            if (CurrentPosition != null) Distributor();
             else WhetherSpawnIsAllowed = true;
-            return;
         }
         else SwitchingBetweenOptions();
     }
 
-    void CheckList()
+    void FindOutSizeOfList()
     {
         CurrentSizeList = listOfRoomsThatAppeared.CountList();
     }
+
+    void Distributor()
+    {
+        if (CurrentPosition != null)
+        {
+            if (CurrentPositionStatus == "default action") SpawnDefault();
+            if (CurrentPositionStatus == "activation for U") SpawnWihsUsingFilter();
+            if (CurrentPositionStatus == "activation for D") SpawnWihsUsingFilter();
+            if (CurrentPositionStatus == "activation for R") SpawnWihsUsingFilter();
+            if (CurrentPositionStatus == "activation for L") SpawnWihsUsingFilter();
+            if (CurrentPositionStatus == "dead end") ClosesOpenRoomsSecondWay(CurrentPosition);
+        }
+    }
+
+    #endregion
 
     #region Spawn room
 
     void SpawnDefault()
     {
-        List<GameObject> DefaultSpawnList = roomTemplates.TheFormationOf(CurrentPosition.name);
-        RandomIndex = Random.Range(0, DefaultSpawnList.Count - 1);
-        Instantiate(DefaultSpawnList[RandomIndex], CurrentPosition.transform.position, DefaultSpawnList[RandomIndex].transform.rotation);
+        int randomNumber = Random.Range(0, 15);
+        if (randomNumber == 2 || randomNumber == 7)
+        {
+            GameObject crossroads = roomTemplates.Crossroads();
+            Instantiate(crossroads, CurrentPosition.transform.position, crossroads.transform.rotation);
+            crossroads = null;
+        }
+        else
+        {
+            GameObject[] DefaultSpawnList = roomTemplates.TheFormationOf(CurrentPosition.name);
+            RandomIndex = Random.Range(0, DefaultSpawnList.Length - 1);
+            Instantiate(DefaultSpawnList[RandomIndex], CurrentPosition.transform.position, DefaultSpawnList[RandomIndex].transform.rotation);
+            DefaultSpawnList = null;
+        }
         WhetherSpawnIsAllowed = true;
     }
 
     void SpawnWihsUsingFilter()
     {
-        if (SpawnList.Count > 1) RandomIndex = Random.Range(0, SpawnList.Count - 1);
-        else RandomIndex = 0;
-        // FixMe -> (in rare cases, no value is assigned in (SpawnList))
-        if (SpawnList.Count > 0) Instantiate(SpawnList[RandomIndex], CurrentPosition.transform.position, Quaternion.identity);
-        else
-        {
-            Debug.Log("error");
-            ClosesOpenRoomsSecondWay();
-        }
-        // <|
+        RandomIndex = Random.Range(0, SpawnList.Length - 1);
+        Instantiate(SpawnList[RandomIndex], CurrentPosition.transform.position, Quaternion.identity);
         WhetherSpawnIsAllowed = true;
     }
 
     void SwitchingBetweenOptions()
     {
+        WhetherSpawnIsAllowed = true;
         int randomSwitch = Random.Range(0, 10);
-        if (randomSwitch == 2 || randomSwitch == 7) ClosesOpenRoomsSecondWay();
+        if (randomSwitch == 2 || randomSwitch == 7) ClosesOpenRoomsSecondWay(CurrentPosition);
         else ClosesOpenRoomsFirstWay();
+        WhetherSpawnIsAllowed = true;
+    }
+
+    void ClosesOpenRoomsSecondWay(GameObject spawnPoint)
+    {
+        if (CurrentPosition != null)
+        {
+            GameObject lastRoom = roomTemplates.SpawnLastRoom(spawnPoint.name);
+            Instantiate(lastRoom, spawnPoint.transform.position, spawnPoint.transform.rotation);
+            MarkPoint(spawnPoint);
+            lastRoom = null;
+        }
     }
 
     void ClosesOpenRoomsFirstWay()
     {
-        if (CurrentPosition != null)
-        {
-            Instantiate(roomTemplates.ObjectClosedRoom, CurrentPosition.transform.position, Quaternion.identity);
-            roomTemplates.listOfRoomsThatAppeared.gameLog.ForSpawnPoint();
-            WhetherSpawnIsAllowed = true;
-        }
-        else return;
+        if (CurrentPosition != null) ClosesOpenRooms(CurrentPosition);
     }
 
-    public void ClosesOpenRoomsSecondWay()
-    {
-        if (CurrentPosition != null)
-        {
-            GameObject lastRoom = roomTemplates.SpawnLastRoom(CurrentPosition.name);
-            Instantiate(lastRoom, CurrentPosition.transform.position, CurrentPosition.transform.rotation);
-            Instantiate(roomTemplates.ObjectError, CurrentPosition.transform.position, Quaternion.identity); // DeleteMe
-            WhetherSpawnIsAllowed = true;
-        }
-        else return;
-    }
-
-    public void ClosesOpenRoomsThirdWay(GameObject spawnPoint)
+    public void ClosesOpenRooms(GameObject spawnPoint)
     {
         Instantiate(roomTemplates.ObjectClosedRoom, spawnPoint.transform.position, Quaternion.identity);
+        roomTemplates.listOfRoomsThatAppeared.gameLog.ForSpawnPoint();
         Destroy(spawnPoint);
+    }
+
+
+    #endregion
+
+    #region For test (delet me)
+
+    void MarkPoint(GameObject spawnPoint)
+    {
+        Instantiate(roomTemplates.ObjectError, spawnPoint.transform.position, Quaternion.identity);
     }
 
     #endregion

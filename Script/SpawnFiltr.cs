@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpawnFiltr : MonoBehaviour
 {
@@ -11,7 +10,8 @@ public class SpawnFiltr : MonoBehaviour
     string RoomThatIsOnTheSpawnSide;
     string DropoutItem;
 
-    [SerializeField] List<GameObject> UnfilteredList;
+    [SerializeField] GameObject[] UnfilteredList;
+    [SerializeField] GameObject[] FilteredList;
 
     private void Awake()
     {
@@ -35,10 +35,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void AddToUnfilteredList()
     {
-        if (gameObject.name == "SpawnPoint U") UnfilteredList = roomTemplates.RoomWithTwoExitsInTheDirectionDown;
-        if (gameObject.name == "SpawnPoint D") UnfilteredList = roomTemplates.RoomWithTwoExitsInTheDirectionUp;
-        if (gameObject.name == "SpawnPoint R") UnfilteredList = roomTemplates.RoomWithTwoExitsInTheDirectionLeft;
-        if (gameObject.name == "SpawnPoint L") UnfilteredList = roomTemplates.RoomWithTwoExitsInTheDirectionRight;
+        UnfilteredList = roomTemplates.TheFormationOf(gameObject.name);
     }
 
     void RecognizeTheDropoutItem()
@@ -69,7 +66,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionUp()
     {
-        if (gameObject.name == "SpawnPoint U") spawnRoom.ClosesOpenRoomsSecondWay();
+        if (gameObject.name == "SpawnPoint U") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for U";
@@ -79,7 +76,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionDown()
     {
-        if (gameObject.name == "SpawnPoint D") spawnRoom.ClosesOpenRoomsSecondWay();
+        if (gameObject.name == "SpawnPoint D") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for D";
@@ -89,7 +86,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionLeft()
     {
-        if (gameObject.name == "SpawnPoint L") spawnRoom.ClosesOpenRoomsSecondWay();
+        if (gameObject.name == "SpawnPoint L") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for L";
@@ -99,7 +96,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionRight()
     {
-        if (gameObject.name == "SpawnPoint R") spawnRoom.ClosesOpenRoomsSecondWay();
+        if (gameObject.name == "SpawnPoint R") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for R";
@@ -110,22 +107,39 @@ public class SpawnFiltr : MonoBehaviour
     #endregion
 
     void MainFilter()
-    {       
+    {
         int endNumber = 0;
-        for (int index = 0; index < UnfilteredList.Count; index++)
+        int sizeUL = UnfilteredList.Length - 1;
+        for (int index = 0; index < UnfilteredList.Length - 1; index++)
         {
             endNumber = UnfilteredList[index].name.Length - 5;
             if (UnfilteredList[index].name.Substring(5, endNumber).Contains(DropoutItem))
             {
+                sizeUL--;
                 UnfilteredList[index] = null;
             }
         }
-        UnfilteredList.RemoveAll(x => x == null);
+        Filter(sizeUL);
     }
 
-    public List<GameObject> FilteredList()
-    {           
-        return UnfilteredList;
+    void Filter(int size)
+    {
+        int indexFL = 0;
+        FilteredList = new GameObject[size];
+        for (int index = 0; index < UnfilteredList.Length - 1; index++)
+        {
+            if (UnfilteredList[index] != null)
+            {
+                FilteredList[indexFL] = UnfilteredList[index];
+                indexFL++;
+            }
+        }
+        UnfilteredList = null;
+    }
+
+    public GameObject[] GetFilteredList()
+    {
+        return FilteredList;
     }
 
     #endregion

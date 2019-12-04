@@ -12,15 +12,15 @@ public class RoomTemplates : MonoBehaviour
     public GameObject ObjectExite;
     public GameObject ObjectError;
 
-    public GameObject UpRooms;
-    public GameObject DownRooms;
-    public GameObject RightRooms;
-    public GameObject LeftRooms;
+    [SerializeField] GameObject UpRooms;
+    [SerializeField] GameObject DownRooms;
+    [SerializeField] GameObject RightRooms;
+    [SerializeField] GameObject LeftRooms;
 
-    public List<GameObject> RoomWithTwoExitsInTheDirectionUp;
-    public List<GameObject> RoomWithTwoExitsInTheDirectionDown;
-    public List<GameObject> RoomWithTwoExitsInTheDirectionLeft;
-    public List<GameObject> RoomWithTwoExitsInTheDirectionRight;
+    [SerializeField] List<GameObject> RoomWithTwoExitsInTheDirectionUp;
+    [SerializeField] List<GameObject> RoomWithTwoExitsInTheDirectionDown;
+    [SerializeField] List<GameObject> RoomWithTwoExitsInTheDirectionLeft;
+    [SerializeField] List<GameObject> RoomWithTwoExitsInTheDirectionRight;
 
     float WaitingForTimeToExit = 2.5f;
 
@@ -41,17 +41,16 @@ public class RoomTemplates : MonoBehaviour
         GameObject spawnPosition = listOfRoomsThatAppeared.IdentifyLastRoom();
         Instantiate(ObjectExite, spawnPosition.transform.position, Quaternion.identity);
     }
-
-    public List<GameObject> TheFormationOf( string spawnPoint)
+    
+    public GameObject[] TheFormationOf(string spawnPoint)
     {
-        List<GameObject> defaultSpawnList = null;
-        if (spawnPoint == "SpawnPoint U") defaultSpawnList = RoomWithTwoExitsInTheDirectionDown;
-        if (spawnPoint == "SpawnPoint D") defaultSpawnList = RoomWithTwoExitsInTheDirectionUp;
-        if (spawnPoint == "SpawnPoint R") defaultSpawnList = RoomWithTwoExitsInTheDirectionLeft;
-        if (spawnPoint == "SpawnPoint L") defaultSpawnList = RoomWithTwoExitsInTheDirectionRight;
-        int randomNumber = Random.Range(0, 12);
-        if (randomNumber == 2 || randomNumber == 5) defaultSpawnList.Add(CrossroadsRooms);
-        return defaultSpawnList;        
+        GameObject[] defaultSpawnList = null;
+        if (spawnPoint == "SpawnPoint U") defaultSpawnList = RoomWithTwoExitsInTheDirectionDown.ToArray();
+        if (spawnPoint == "SpawnPoint D") defaultSpawnList = RoomWithTwoExitsInTheDirectionUp.ToArray();
+        if (spawnPoint == "SpawnPoint R") defaultSpawnList = RoomWithTwoExitsInTheDirectionLeft.ToArray();
+        if (spawnPoint == "SpawnPoint L") defaultSpawnList = RoomWithTwoExitsInTheDirectionRight.ToArray();
+        int randomNumber = Random.Range(0, 1);      
+        return defaultSpawnList;
     }
 
     public GameObject SpawnLastRoom(string spawnPoint)
@@ -63,4 +62,10 @@ public class RoomTemplates : MonoBehaviour
         if (spawnPoint == "SpawnPoint L") spawnLastRoom = RightRooms;
         return spawnLastRoom;
     }   
+
+    public GameObject Crossroads()
+    {
+        GameObject crossroads = CrossroadsRooms;
+        return crossroads;
+    }
 }
