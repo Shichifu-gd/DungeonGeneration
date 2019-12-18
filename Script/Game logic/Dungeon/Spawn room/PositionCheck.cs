@@ -31,5 +31,5 @@ public class PositionCheck : MonoBehaviour
             Destroy(gameObject);
         }
         if (other.CompareTag("Room")) Destroy(gameObject);
-    }  
+    }
 }

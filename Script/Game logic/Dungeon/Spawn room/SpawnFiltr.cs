@@ -3,12 +3,12 @@
 public class SpawnFiltr : MonoBehaviour
 {
     RoomTemplates roomTemplates;
-    SpawnRoom spawnRoom;
 
     public string PositionStatus { get; set; }
 
     string RoomThatIsOnTheSpawnSide;
     string DropoutItem;
+    string SpawnDirectionName;
 
     [SerializeField] GameObject[] UnfilteredList;
     [SerializeField] GameObject[] FilteredList;
@@ -16,12 +16,12 @@ public class SpawnFiltr : MonoBehaviour
     private void Awake()
     {
         roomTemplates = GameObject.FindGameObjectWithTag("RoomTemplates").GetComponent<RoomTemplates>();
-        spawnRoom = GameObject.FindGameObjectWithTag("SpawnRoom").GetComponent<SpawnRoom>();
     }
 
     private void Start()
     {
         PositionStatus = PositionStatus ?? "default action";
+        SpawnDirectionName = GetComponent<SpawnPoint>().NameSpawnPoint;
     }
 
     #region We filter rooms for spawn
@@ -35,7 +35,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void AddToUnfilteredList()
     {
-        UnfilteredList = roomTemplates.TheFormationOf(gameObject.name);
+        UnfilteredList = roomTemplates.SelectRoom(SpawnDirectionName);
     }
 
     void RecognizeTheDropoutItem()
@@ -66,7 +66,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionUp()
     {
-        if (gameObject.name == "SpawnPoint U") PositionStatus = "dead end";
+        if (SpawnDirectionName == "SpawnPoint U") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for U";
@@ -76,7 +76,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionDown()
     {
-        if (gameObject.name == "SpawnPoint D") PositionStatus = "dead end";
+        if (SpawnDirectionName == "SpawnPoint D") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for D";
@@ -86,7 +86,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionLeft()
     {
-        if (gameObject.name == "SpawnPoint L") PositionStatus = "dead end";
+        if (SpawnDirectionName == "SpawnPoint L") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for L";
@@ -96,7 +96,7 @@ public class SpawnFiltr : MonoBehaviour
 
     void CheckOppositeDirectionRight()
     {
-        if (gameObject.name == "SpawnPoint R") PositionStatus = "dead end";
+        if (SpawnDirectionName == "SpawnPoint R") PositionStatus = "dead end";
         else
         {
             PositionStatus = "activation for R";
