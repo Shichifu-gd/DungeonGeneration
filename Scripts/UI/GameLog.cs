@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class GameLog : MonoBehaviour
 {
-    [SerializeField] Text RoomsAvailableLog;
-    [SerializeField] Text CloseRoomLog;
-    [SerializeField] Text MaxRoom;
+    public Text RoomsAvailableLog;
+    public Text CloseRoomLog;
+    public Text MaxRoom;
 
-    int NumberOfClosedRooms;
+    private int NumberOfClosedRooms;
 
     public void ForListOfRoomsThatAppeared(string other)
     {

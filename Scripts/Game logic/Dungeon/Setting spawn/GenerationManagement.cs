@@ -1,19 +1,19 @@
-﻿using System.IO;
+﻿using UnityEngine.UI;
 using UnityEngine;
-using UnityEngine.UI;
+using System.IO;
 
 public class GenerationManagement : MonoBehaviour
 {
-    [SerializeField] LevelRestart levelRestart;
-    [SerializeField] ListOfRoomsThatAppeared listOfRoomsThatAppeared;
-    [SerializeField] RoomTemplates roomTemplates;
-    [SerializeField] SpawnRoom spawnRoom;
+    public LevelRestart levelRestart;
+    public ListOfRoomsThatAppeared listOfRoomsThatAppeared;
+    public RoomTemplates roomTemplates;
+    public SpawnRoom spawnRoom;
 
-    [SerializeField] Text TextRestartTime;
-    [SerializeField] Text TextMaxRoom;
-    [SerializeField] Text TextMinRoom;
-    [SerializeField] Text TextTime;
-    [SerializeField] Text TextWaitTime;
+    public Text TextRestartTime;
+    public Text TextMaxRoom;
+    public Text TextMinRoom;
+    public Text TextTime;
+    public Text TextWaitTime;
 
     public float RestartTime { get; set; }
     public int MaxRoom { get; set; }
@@ -21,7 +21,7 @@ public class GenerationManagement : MonoBehaviour
     public float Time { get; set; }
     public float WaitTime { get; set; }
 
-    void Awake()
+    private void Awake()
     {
         if (File.Exists(Application.dataPath + "/data/SaveSettings.dt")) LoadingSettings();
         levelRestart.EndTime = RestartTime;
@@ -37,12 +37,12 @@ public class GenerationManagement : MonoBehaviour
         levelRestart.PauseLevelRestart();
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
         SaveSettingsSpawn.SaveLocalizationTheGame(this);
     }
 
-    void LoadingSettings()
+    private void LoadingSettings()
     {
         string[] dataSettings = SaveSettingsSpawn.LoadLocalizationTheGame();
         RestartTime = float.Parse(dataSettings[0]);
@@ -53,7 +53,7 @@ public class GenerationManagement : MonoBehaviour
         UpdateText();
     }
 
-    void UpdateText()
+    private void UpdateText()
     {
         SettingRestartTime("");
         SettingMaxRoom("");
@@ -105,7 +105,7 @@ public class GenerationManagement : MonoBehaviour
     }
     #endregion
 
-    void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
         SaveSettings();
     }

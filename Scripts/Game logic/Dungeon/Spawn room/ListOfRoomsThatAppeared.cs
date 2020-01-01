@@ -5,8 +5,8 @@ public class ListOfRoomsThatAppeared : MonoBehaviour
 {
     public GameLog gameLog;
 
-    int maximumNumberOfRooms;
-    int minimumNumberOfRooms;
+    private int maximumNumberOfRooms;
+    private int minimumNumberOfRooms;
 
     [SerializeField] List<GameObject> RoomsAvailable;
 

@@ -4,13 +4,13 @@ using UnityEngine;
 public class LevelRestart : MonoBehaviour
 {
     [SerializeField]
-    bool Switch = true;
-    bool pauseLevelRestart;
+    private bool Switch = true;
+    private bool pauseLevelRestart;
 
-    float TimeToRestart = 0;
-    float endTime;
+    private float TimeToRestart = 0;
+    private float endTime;
 
-    void Update()
+    private void Update()
     {
         if (Switch == true && pauseLevelRestart == false)
         {
@@ -37,6 +37,5 @@ public class LevelRestart : MonoBehaviour
             else endTime = 10;
         }
     }
-
     #endregion
 }

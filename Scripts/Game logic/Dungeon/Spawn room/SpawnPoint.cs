@@ -2,9 +2,9 @@
 
 public class SpawnPoint : MonoBehaviour
 {
-    SpawnRoom spawnRoom;
+    private SpawnRoom spawnRoom;
 
-    int SpawnPriority { get; set; }
+    private int SpawnPriority { get; set; }
 
     public string NameSpawnPoint { get; set; }
     public string RoomVersion { get; set; }
@@ -44,14 +44,13 @@ public class SpawnPoint : MonoBehaviour
      * |version||spawn_side| = 2        
      * general = 13                     
      * ------------- end --------------- */
-
-    void DetermineVersion()
+    private void DetermineVersion()
     {
-        if (gameObject.name.Substring(11, 1) == "0") RoomVersion = "standard " + DefineSpawnDirection(gameObject.name.Substring(12, 1));
-        if (gameObject.name.Substring(11, 1) == "1") RoomVersion = "long " + DefineSpawnDirection(gameObject.name.Substring(12, 1));
+        if (gameObject.name.Substring(11, 1) == "0") RoomVersion = "standard";
+        if (gameObject.name.Substring(11, 1) == "1") RoomVersion = "long";
     }
 
-    string DefineSpawnDirection(string numberSide)
+    private string DefineSpawnDirection(string numberSide)
     {
         string side = null;
         if (numberSide == "1") side = "U";
@@ -61,12 +60,12 @@ public class SpawnPoint : MonoBehaviour
         return side;
     }
 
-    void Prioritize()
+    private void Prioritize()
     {
         SpawnPriority = int.Parse(gameObject.name.Substring(12, 1));
     }
 
-    void FormNameObject()
+    private void FormNameObject()
     {
         NameSpawnPoint = "SpawnPoint " + DefineSpawnDirection(gameObject.name.Substring(12, 1));
     }

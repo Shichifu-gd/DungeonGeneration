@@ -2,7 +2,7 @@
 
 public class Room : MonoBehaviour
 {
-    ListOfRoomsThatAppeared listOfRoomsThatAppeared;
+    private ListOfRoomsThatAppeared listOfRoomsThatAppeared;
 
     private void Awake()
     {
@@ -12,5 +12,5 @@ public class Room : MonoBehaviour
     private void Start()
     {
         listOfRoomsThatAppeared.AddToLRA(gameObject);
-    }     
+    }
 }
